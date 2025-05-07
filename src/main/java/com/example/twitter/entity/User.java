@@ -33,6 +33,9 @@ public class User {
     @NotBlank(message = "Email is required")
     private String email;
 
+    @Column(name = "created_at")
+    private String createdAt;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Tweet> tweets;
 
@@ -41,4 +44,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Like> likes;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Retweet> retweets;
 }

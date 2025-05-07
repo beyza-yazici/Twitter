@@ -36,6 +36,9 @@ public class Tweet {
 
     private LocalDateTime createdAt;
 
+    @OneToMany(mappedBy = "originalTweet", cascade = CascadeType.ALL)
+    private List<Retweet> retweets;
+
     @PrePersist
     protected void onCreate(){
         createdAt = LocalDateTime.now();
