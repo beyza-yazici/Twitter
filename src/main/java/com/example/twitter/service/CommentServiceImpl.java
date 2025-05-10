@@ -65,8 +65,8 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public List<CommentResponseDTO> findCommentsByUserId(Long userId) {
-        return commentRepository.findByUserId(userId).stream().map(this::convertCommentToCommentResponse).collect(Collectors.toList());
+    public List<CommentResponseDTO> findCommentsByTweetId(Long tweetId) {
+        return commentRepository.findByTweetId(tweetId).stream().map(this::convertCommentToCommentResponse).collect(Collectors.toList());
     }
 
     private CommentResponseDTO convertCommentToCommentResponse(Comment comment) {

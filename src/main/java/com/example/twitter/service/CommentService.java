@@ -10,5 +10,5 @@ public interface CommentService {
     CommentResponseDTO createComment (CommentRequestDTO commentRequestDTO);
     CommentResponseDTO updateComment(Long id, CommentRequestDTO commentRequestDTO);
     void deleteComment (Long id);
-    List<CommentResponseDTO> findCommentsByUserId(Long userId);
+    List<CommentResponseDTO> findCommentsByTweetId(Long tweetId);
 }

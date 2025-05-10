@@ -8,7 +8,6 @@ import com.example.twitter.exception.ResourceNotFoundException;
 import com.example.twitter.exception.UnauthorizedException;
 import com.example.twitter.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService{
 
@@ -44,7 +42,7 @@ public class AuthServiceImpl implements AuthService{
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return new AuthResponseDTO(
-                "session-based-auth", // Instead of JWT token
+                "session-based-auth",
                 "Session",
                 convertUserToUserResponse(user)
         );
