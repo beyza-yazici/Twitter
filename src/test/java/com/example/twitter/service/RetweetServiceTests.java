@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,9 +58,20 @@ class RetweetServiceTests {
         user.setId(1L);
         user.setUsername("testuser");
 
+        User tweetOwner = new User();
+        tweetOwner.setId(2L);
+        tweetOwner.setUsername("originaluser");
+
         Tweet originalTweet = new Tweet();
         originalTweet.setId(1L);
         originalTweet.setContent("Original tweet content");
+        originalTweet.setUser(tweetOwner);
+
+        originalTweet.setComments(new ArrayList<>());
+        originalTweet.setLikes(new ArrayList<>());
+        originalTweet.setRetweets((new ArrayList<>()));
+
+        originalTweet.setCreatedAt(LocalDateTime.now());
 
         Retweet retweet = new Retweet();
         retweet.setId(1L);
@@ -70,7 +82,6 @@ class RetweetServiceTests {
 
         when(authService.getCurrentUser()).thenReturn(currentUser);
         when(tweetRepository.findById(request.getOriginalTweetId())).thenReturn(Optional.of(originalTweet));
-        when(userRepository.findById(currentUser.getId())).thenReturn(Optional.of(user));
         when(retweetRepository.save(any(Retweet.class))).thenReturn(retweet);
 
         RetweetResponseDTO response = retweetService.createRetweet(request);
@@ -92,7 +103,16 @@ class RetweetServiceTests {
         UserResponseDTO currentUser = new UserResponseDTO();
         currentUser.setId(1L);
 
+        Tweet originalTweet = new Tweet();
+        originalTweet.setId(1L);
+
+        User user = new User();
+        user.setId(1L);
+        originalTweet.setUser(user);
+
         when(authService.getCurrentUser()).thenReturn(currentUser);
+        when(tweetRepository.findById(request.getOriginalTweetId()))
+                .thenReturn(Optional.of(originalTweet));
         when(retweetRepository.existsByUserIdAndOriginalTweetId(currentUser.getId(), request.getOriginalTweetId()))
                 .thenReturn(true);
 

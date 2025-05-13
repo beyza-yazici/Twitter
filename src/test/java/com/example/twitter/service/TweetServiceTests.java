@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,6 +57,10 @@ class TweetServiceTests {
         tweet.setUser(user);
         tweet.setCreatedAt(LocalDateTime.now());
 
+        tweet.setComments(new ArrayList<>());
+        tweet.setLikes(new ArrayList<>());
+        tweet.setRetweets(new ArrayList<>());
+
         when(authService.getCurrentUser()).thenReturn(currentUser);
         when(userRepository.findById(currentUser.getId())).thenReturn(Optional.of(user));
         when(tweetRepository.save(any(Tweet.class))).thenReturn(tweet);
@@ -82,6 +87,10 @@ class TweetServiceTests {
         tweet.setContent("Test tweet");
         tweet.setUser(user);
         tweet.setCreatedAt(LocalDateTime.now());
+
+        tweet.setComments(new ArrayList<>());
+        tweet.setLikes(new ArrayList<>());
+        tweet.setRetweets(new ArrayList<>());
 
         when(tweetRepository.findById(tweetId)).thenReturn(Optional.of(tweet));
 

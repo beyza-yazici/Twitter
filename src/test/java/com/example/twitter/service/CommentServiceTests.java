@@ -5,8 +5,10 @@ import com.example.twitter.dto.CommentResponseDTO;
 import com.example.twitter.dto.UserResponseDTO;
 import com.example.twitter.entity.Comment;
 import com.example.twitter.entity.Tweet;
+import com.example.twitter.entity.User;
 import com.example.twitter.repository.CommentRepository;
 import com.example.twitter.repository.TweetRepository;
+import com.example.twitter.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,6 +34,9 @@ class CommentServiceTests {
     private TweetRepository tweetRepository;
 
     @Mock
+    private UserRepository userRepository;
+
+    @Mock
     private AuthService authService;
 
     @InjectMocks
@@ -48,17 +53,24 @@ class CommentServiceTests {
         currentUser.setId(1L);
         currentUser.setUsername("testuser");
 
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("testuser");
+
         Tweet tweet = new Tweet();
         tweet.setId(1L);
+        tweet.setUser(user);
 
         Comment comment = new Comment();
         comment.setId(1L);
         comment.setContent(request.getContent());
         comment.setTweet(tweet);
+        comment.setUser(user);
         comment.setCreatedAt(LocalDateTime.now());
 
         when(authService.getCurrentUser()).thenReturn(currentUser);
         when(tweetRepository.findById(request.getTweetId())).thenReturn(Optional.of(tweet));
+        when(userRepository.getReferenceById(any(Long.class))).thenReturn(user);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
 
         CommentResponseDTO response = commentService.createComment(request);
