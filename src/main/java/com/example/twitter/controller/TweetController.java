@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tweets")
+@RequestMapping("/tweet")
 @RequiredArgsConstructor
 @Slf4j
 public class TweetController {
@@ -36,8 +36,8 @@ public class TweetController {
         return ResponseEntity.ok(tweetService.findTweetById(id));
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<TweetResponseDTO>> findTweetsByUserId(@PathVariable Long userId){
+    @GetMapping("/findByUserId")
+    public ResponseEntity<List<TweetResponseDTO>> findTweetsByUserId(@RequestParam Long userId){
         log.info("Fetching tweets for user: {}", userId);
         return ResponseEntity.ok(tweetService.findTweetsByUserId(userId));
     }

@@ -17,7 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
@@ -32,9 +32,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO){
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request){
         log.info("Login request received for username: {}", loginRequestDTO.getUsername());
-        return ResponseEntity.ok(authService.login(loginRequestDTO));
+        return ResponseEntity.ok(authService.login(loginRequestDTO, request));
     }
 
     @PostMapping("/logout")

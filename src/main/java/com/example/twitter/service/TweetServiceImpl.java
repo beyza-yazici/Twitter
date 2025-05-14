@@ -27,15 +27,23 @@ public class TweetServiceImpl implements TweetService {
 
     @Override
     public TweetResponseDTO createTweet(TweetRequestDTO tweetRequestDTO) {
-        UserResponseDTO currentUser = authService.getCurrentUser();
-        User user = userRepository.findById(currentUser.getId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        try {
 
-        Tweet tweet = new Tweet();
-        tweet.setContent(tweetRequestDTO.getContent());
-        tweet.setUser(user);
+            UserResponseDTO currentUser = authService.getCurrentUser();
+            User user = userRepository.findById(currentUser.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Tweet savedTweet = tweetRepository.save(tweet);
-        return convertTweetToTweetResponse(savedTweet);
+            Tweet tweet = new Tweet();
+            tweet.setContent(tweetRequestDTO.getContent());
+            tweet.setUser(user);
+            tweet.setCreatedAt(LocalDateTime.parse(LocalDateTime.now().toString()));
+
+            Tweet savedTweet = tweetRepository.save(tweet);
+            return convertTweetToTweetResponse(savedTweet);
+        } catch (Exception e) {
+            log.error("Error creating tweet: ", e);
+            throw new ResourceNotFoundException("Unable to create tweet. Please login first.");
+        }
     }
 
     @Override

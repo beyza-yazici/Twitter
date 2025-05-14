@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/retweets")
+@RequestMapping("/retweets")
 @RequiredArgsConstructor
 @Slf4j
 public class RetweetController {

@@ -7,6 +7,8 @@ import com.example.twitter.entity.User;
 import com.example.twitter.exception.ResourceNotFoundException;
 import com.example.twitter.exception.UnauthorizedException;
 import com.example.twitter.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,7 +28,7 @@ public class AuthServiceImpl implements AuthService{
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public AuthResponseDTO login(LoginRequestDTO loginRequestDTO) {
+    public AuthResponseDTO login(LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
         User user = userRepository.findByUsername(loginRequestDTO.getUsername())
                 .orElseThrow(() -> new UnauthorizedException("Invalid username or password"));
 
@@ -41,8 +43,12 @@ public class AuthServiceImpl implements AuthService{
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        // Oturumu açıkça oluştur
+        HttpSession session = request.getSession(true);
+        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+
         return new AuthResponseDTO(
-                "session-based-auth",
+                session.getId(),  // JSESSIONID değeri
                 "Session",
                 convertUserToUserResponse(user)
         );
