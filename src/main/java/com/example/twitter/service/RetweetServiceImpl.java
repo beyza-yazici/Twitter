@@ -1,9 +1,7 @@
 package com.example.twitter.service;
 
-import com.example.twitter.dto.RetweetRequestDTO;
-import com.example.twitter.dto.RetweetResponseDTO;
-import com.example.twitter.dto.TweetResponseDTO;
-import com.example.twitter.dto.UserResponseDTO;
+import com.example.twitter.dto.*;
+import com.example.twitter.entity.Comment;
 import com.example.twitter.entity.Retweet;
 import com.example.twitter.entity.Tweet;
 import com.example.twitter.entity.User;
@@ -18,6 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -75,16 +77,48 @@ public class RetweetServiceImpl implements RetweetService{
     }
 
     private TweetResponseDTO convertTweetToTweetResponse(Tweet tweet) {
+        // Önce tweet'in kendisinin null olup olmadığını kontrol et
+        if (tweet == null) {
+            return null;
+        }
+
+        // Kullanıcı için null kontrolü yap
+        UserResponseDTO userResponseDTO = tweet.getUser() != null ?
+                convertUserToUserResponse(tweet.getUser()) : null;
+
+        // Comments, likes ve retweets için null kontrolü
+        List<CommentResponseDTO> comments = new ArrayList<>();
+        int commentCount = 0;
+        int likeCount = 0;
+        int retweetCount = 0;
+
+        if (tweet.getComments() != null) {
+            comments = tweet.getComments().stream()
+                    .map(this::convertCommentToCommentResponse)
+                    .collect(Collectors.toList());
+            commentCount = comments.size();
+        }
+
+        if (tweet.getLikes() != null) {
+            likeCount = tweet.getLikes().size();
+        }
+
+        if (tweet.getRetweets() != null) {
+            retweetCount = tweet.getRetweets().size();
+        }
+
+        // TweetResponseDTO constructor'ına uygun olarak tüm parametreleri veriyoruz
         return new TweetResponseDTO(
                 tweet.getId(),
                 tweet.getContent(),
-                convertUserToUserResponse(tweet.getUser()),
+                userResponseDTO,
+                Collections.singletonList((CommentResponseDTO) comments),  // Comments listesi
                 tweet.getCreatedAt(),
-                tweet.getComments().size(),
-                tweet.getLikes().size(),
-                tweet.getRetweets().size(),
-                false,
-                false
+                likeCount,
+                commentCount,
+                retweetCount,
+                false,  // isLiked
+                false   // isRetweeted
         );
     }
 
@@ -94,6 +128,16 @@ public class RetweetServiceImpl implements RetweetService{
                 user.getUsername(),
                 user.getEmail(),
                 LocalDateTime.now()
+        );
+    }
+
+    private CommentResponseDTO convertCommentToCommentResponse(Comment comment) {
+        return new CommentResponseDTO(
+                comment.getId(),
+                comment.getContent(),
+                convertUserToUserResponse(comment.getUser()),
+                comment.getTweet().getId(),
+                comment.getCreatedAt()
         );
     }
 }

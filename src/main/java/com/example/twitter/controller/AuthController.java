@@ -32,7 +32,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request){
+    public ResponseEntity<AuthResponseDTO> login(
+            @RequestBody LoginRequestDTO loginRequestDTO,
+            HttpServletRequest request
+    ){
         log.info("Login request received for username: {}", loginRequestDTO.getUsername());
         return ResponseEntity.ok(authService.login(loginRequestDTO, request));
     }

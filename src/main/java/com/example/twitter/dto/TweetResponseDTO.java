@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -13,6 +15,7 @@ public class TweetResponseDTO {
     private Long id;
     private String content;
     private UserResponseDTO user;
+    private List<CommentResponseDTO> comments = new ArrayList<>();
     private LocalDateTime createdAt;
     private int likeCount;
     private int commentCount;

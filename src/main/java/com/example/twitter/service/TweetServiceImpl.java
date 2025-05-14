@@ -1,18 +1,25 @@
 package com.example.twitter.service;
 
+import com.example.twitter.dto.CommentResponseDTO;
 import com.example.twitter.dto.TweetRequestDTO;
 import com.example.twitter.dto.TweetResponseDTO;
 import com.example.twitter.dto.UserResponseDTO;
+import com.example.twitter.entity.Comment;
 import com.example.twitter.entity.Tweet;
 import com.example.twitter.entity.User;
+import com.example.twitter.exception.BadRequestException;
 import com.example.twitter.exception.ResourceNotFoundException;
+import com.example.twitter.exception.UnauthorizedException;
 import com.example.twitter.repository.TweetRepository;
 import com.example.twitter.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +35,11 @@ public class TweetServiceImpl implements TweetService {
     @Override
     public TweetResponseDTO createTweet(TweetRequestDTO tweetRequestDTO) {
         try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+            if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
+                throw new UnauthorizedException("Please login first");
+            }
 
             UserResponseDTO currentUser = authService.getCurrentUser();
             User user = userRepository.findById(currentUser.getId())
@@ -36,13 +48,20 @@ public class TweetServiceImpl implements TweetService {
             Tweet tweet = new Tweet();
             tweet.setContent(tweetRequestDTO.getContent());
             tweet.setUser(user);
-            tweet.setCreatedAt(LocalDateTime.parse(LocalDateTime.now().toString()));
+            tweet.setCreatedAt(LocalDateTime.now());
+
+            // İlişkisel alanları başlat
+            tweet.setComments(new ArrayList<>());
+            // Diğer ilişkisel alanlar varsa (likes, retweets) onları da başlatın
 
             Tweet savedTweet = tweetRepository.save(tweet);
             return convertTweetToTweetResponse(savedTweet);
+        } catch (UnauthorizedException e) {
+            throw e;
+        } catch (ResourceNotFoundException e) {
+            throw e;
         } catch (Exception e) {
-            log.error("Error creating tweet: ", e);
-            throw new ResourceNotFoundException("Unable to create tweet. Please login first.");
+            throw new BadRequestException("Error creating tweet: " + e.getMessage());
         }
     }
 
@@ -77,16 +96,39 @@ public class TweetServiceImpl implements TweetService {
     }
 
     private TweetResponseDTO convertTweetToTweetResponse(Tweet tweet) {
+        // Önce tweet'in kendisinin null olup olmadığını kontrol et
+        if (tweet == null) {
+            return null;
+        }
+
+        // Kullanıcı için null kontrolü yap
+        UserResponseDTO userResponseDTO = tweet.getUser() != null ?
+                convertUserToUserResponse(tweet.getUser()) : null;
+
+        // İlişkili koleksiyonlar için null kontrolü yap
+        int commentCount = tweet.getComments() != null ? tweet.getComments().size() : 0;
+        int likeCount = tweet.getLikes() != null ? tweet.getLikes().size() : 0;
+        int retweetCount = tweet.getRetweets() != null ? tweet.getRetweets().size() : 0;
+
+        // Yorumları dönüştür (eğer mevcutsa)
+        List<CommentResponseDTO> commentResponseDTOs = new ArrayList<>();
+        if (tweet.getComments() != null) {
+            commentResponseDTOs = tweet.getComments().stream()
+                    .map(this::convertCommentToCommentResponse)
+                    .collect(Collectors.toList());
+        }
+
         return new TweetResponseDTO(
                 tweet.getId(),
                 tweet.getContent(),
-                convertUserToUserResponse(tweet.getUser()),
+                userResponseDTO,
+                commentResponseDTOs,  // Dönüştürülmüş yorumlar listesi
                 tweet.getCreatedAt(),
-                tweet.getComments().size(),
-                tweet.getLikes().size(),
-                tweet.getRetweets().size(),
-                false,
-                false
+                likeCount,
+                commentCount,
+                retweetCount,
+                false,  // isLiked - şu an statik olarak false
+                false   // isRetweeted - şu an statik olarak false
         );
     }
 
@@ -96,6 +138,16 @@ public class TweetServiceImpl implements TweetService {
                 user.getUsername(),
                 user.getEmail(),
                 LocalDateTime.now()
+        );
+    }
+
+    private CommentResponseDTO convertCommentToCommentResponse(Comment comment) {
+        return new CommentResponseDTO(
+                comment.getId(),
+                comment.getContent(),
+                convertUserToUserResponse(comment.getUser()),
+                comment.getTweet().getId(),
+                comment.getCreatedAt()
         );
     }
 

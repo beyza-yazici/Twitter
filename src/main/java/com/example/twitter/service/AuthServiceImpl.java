@@ -10,11 +10,13 @@ import com.example.twitter.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,7 @@ import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService{
 
     private final UserRepository userRepository;
@@ -36,19 +39,26 @@ public class AuthServiceImpl implements AuthService{
             throw new UnauthorizedException("Invalid username or password");
         }
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 user.getUsername(),
-                null,
+                null, // Kimlik doğrulandıktan sonra şifre null olabilir
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
         );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Oturumu açıkça oluştur
+        // Authentication nesnesine ayrıntılar ekleyin
+        authToken.setDetails(new WebAuthenticationDetails(request));
+
+        // Security Context'i güncelleyin
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        // Oturumu açıkça oluşturun
         HttpSession session = request.getSession(true);
         session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
+        log.info("User logged in successfully: {}, Session ID: {}", user.getUsername(), session.getId());
+
         return new AuthResponseDTO(
-                session.getId(),  // JSESSIONID değeri
+                session.getId(), // JSESSIONID
                 "Session",
                 convertUserToUserResponse(user)
         );
@@ -56,9 +66,18 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     public UserResponseDTO getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        // Kimlik doğrulama durumunu kontrol edin
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
+            log.error("User not authenticated properly. Auth: {}, Name: {}",
+                    auth, auth != null ? auth.getName() : "null");
+            throw new UnauthorizedException("User not authenticated");
+        }
+
+        String username = auth.getName();
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
         return convertUserToUserResponse(user);
     }
 
