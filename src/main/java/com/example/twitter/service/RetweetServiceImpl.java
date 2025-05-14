@@ -77,16 +77,14 @@ public class RetweetServiceImpl implements RetweetService{
     }
 
     private TweetResponseDTO convertTweetToTweetResponse(Tweet tweet) {
-        // Önce tweet'in kendisinin null olup olmadığını kontrol et
+
         if (tweet == null) {
             return null;
         }
 
-        // Kullanıcı için null kontrolü yap
         UserResponseDTO userResponseDTO = tweet.getUser() != null ?
                 convertUserToUserResponse(tweet.getUser()) : null;
 
-        // Comments, likes ve retweets için null kontrolü
         List<CommentResponseDTO> comments = new ArrayList<>();
         int commentCount = 0;
         int likeCount = 0;
@@ -107,18 +105,17 @@ public class RetweetServiceImpl implements RetweetService{
             retweetCount = tweet.getRetweets().size();
         }
 
-        // TweetResponseDTO constructor'ına uygun olarak tüm parametreleri veriyoruz
         return new TweetResponseDTO(
                 tweet.getId(),
                 tweet.getContent(),
                 userResponseDTO,
-                Collections.singletonList((CommentResponseDTO) comments),  // Comments listesi
+                comments,
                 tweet.getCreatedAt(),
                 likeCount,
                 commentCount,
                 retweetCount,
-                false,  // isLiked
-                false   // isRetweeted
+                false,
+                false
         );
     }
 
@@ -127,7 +124,7 @@ public class RetweetServiceImpl implements RetweetService{
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                LocalDateTime.now()
+                user.getCreatedAt()
         );
     }
 

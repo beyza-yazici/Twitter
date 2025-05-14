@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/likes")
+@RequestMapping("/like")
 @RequiredArgsConstructor
 @Slf4j
 public class LikeController {
 
     private final LikeService likeService;
 
-    @PostMapping("/tweet/{tweetId}")
+    /*@PostMapping("/tweet/{tweetId}")
     public ResponseEntity<Void> likeTweet(@PathVariable Long tweetId) {
         log.info("Liking tweet: {}", tweetId);
         likeService.likeTweet(tweetId);
@@ -35,7 +35,7 @@ public class LikeController {
     public ResponseEntity<List<UserResponseDTO>> getTweetLikes(@PathVariable Long tweetId) {
         log.info("Fetching likes for tweet: {}", tweetId);
         return ResponseEntity.ok(likeService.getLikesByTweetId(tweetId));
-    }
+    }*/
 
     @GetMapping("/tweet/{tweetId}/count")
     public ResponseEntity<Integer> getTweetLikeCount(@PathVariable Long tweetId) {

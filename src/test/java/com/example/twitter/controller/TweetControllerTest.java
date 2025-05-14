@@ -62,7 +62,7 @@ class TweetControllerTest {
         when(tweetService.createTweet(any(TweetRequestDTO.class)))
                 .thenReturn(response);
 
-        mockMvc.perform(post("/api/tweets")
+        mockMvc.perform(post("/tweet")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -80,7 +80,7 @@ class TweetControllerTest {
 
         when(tweetService.findTweetById(tweetId)).thenReturn(response);
 
-        mockMvc.perform(get("/api/tweets/{id}", tweetId))
+        mockMvc.perform(get("/tweet/{id}", tweetId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(tweetId))
                 .andExpect(jsonPath("$.content").value("Test tweet"))

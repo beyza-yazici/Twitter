@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,31 +62,6 @@ class UserControllerTest {
     }
 
     @Test
-    void whenRegisterUser_thenReturn201() throws Exception {
-
-        UserRequestDTO request = new UserRequestDTO();
-        request.setUsername("testuser");
-        request.setEmail("test@test.com");
-        request.setPassword("password123");
-
-        UserResponseDTO response = new UserResponseDTO();
-        response.setId(1L);
-        response.setUsername(request.getUsername());
-        response.setEmail(request.getEmail());
-
-        when(userService.registerUser(any(UserRequestDTO.class)))
-                .thenReturn(response);
-
-        mockMvc.perform(post("/api/users/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.username").value(request.getUsername()))
-                .andExpect(jsonPath("$.email").value(request.getEmail()))
-                .andDo(print());
-    }
-
-    @Test
     void whenGetUserById_thenReturn200() throws Exception {
 
         Long userId = 1L;
@@ -96,7 +72,7 @@ class UserControllerTest {
 
         when(userService.findUserById(userId)).thenReturn(response);
 
-        mockMvc.perform(get("/api/users/{id}", userId))
+        mockMvc.perform(get("/users/{id}", userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))
                 .andExpect(jsonPath("$.username").value("testuser"))
@@ -123,7 +99,7 @@ class UserControllerTest {
         when(userService.updateUser(eq(userId), any(UserRequestDTO.class)))
                 .thenReturn(response);
 
-        mockMvc.perform(put("/api/users/profile")
+        mockMvc.perform(put("/users/profile")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -141,7 +117,7 @@ class UserControllerTest {
         when(authService.getCurrentUser()).thenReturn(currentUser);
         doNothing().when(userService).deleteUser(currentUser.getId());
 
-        mockMvc.perform(delete("/api/users/profile"))
+        mockMvc.perform(delete("/users/profile"))
                 .andExpect(status().isNoContent())
                 .andDo(print());
     }
@@ -151,13 +127,13 @@ class UserControllerTest {
 
         Long userId = 1L;
         List<TweetResponseDTO> tweets = Arrays.asList(
-                new TweetResponseDTO(1L, "First tweet", null, LocalDateTime.now(), 0, 0, 0, false, false),
-                new TweetResponseDTO(2L, "Second tweet", null, LocalDateTime.now(), 0, 0, 0, false, false)
+                new TweetResponseDTO(1L, "First tweet", null, new ArrayList<>(), LocalDateTime.now(), 0, 0, 0, false, false),
+                new TweetResponseDTO(2L, "Second tweet", null, new ArrayList<>(), LocalDateTime.now(), 0, 0, 0, false, false)
         );
 
         when(tweetService.findTweetsByUserId(userId)).thenReturn(tweets);
 
-        mockMvc.perform(get("/api/users/{userId}/tweets", userId))
+        mockMvc.perform(get("/users/{userId}/tweets", userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].content").value("First tweet"))

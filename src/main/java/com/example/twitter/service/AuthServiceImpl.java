@@ -41,24 +41,21 @@ public class AuthServiceImpl implements AuthService{
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 user.getUsername(),
-                null, // Kimlik doğrulandıktan sonra şifre null olabilir
+                null,
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
         );
 
-        // Authentication nesnesine ayrıntılar ekleyin
         authToken.setDetails(new WebAuthenticationDetails(request));
 
-        // Security Context'i güncelleyin
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        // Oturumu açıkça oluşturun
         HttpSession session = request.getSession(true);
         session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
         log.info("User logged in successfully: {}, Session ID: {}", user.getUsername(), session.getId());
 
         return new AuthResponseDTO(
-                session.getId(), // JSESSIONID
+                session.getId(),
                 "Session",
                 convertUserToUserResponse(user)
         );
@@ -68,7 +65,6 @@ public class AuthServiceImpl implements AuthService{
     public UserResponseDTO getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // Kimlik doğrulama durumunu kontrol edin
         if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
             log.error("User not authenticated properly. Auth: {}, Name: {}",
                     auth, auth != null ? auth.getName() : "null");
@@ -86,7 +82,7 @@ public class AuthServiceImpl implements AuthService{
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                LocalDateTime.now()
+                user.getCreatedAt()
         );
     }
 }

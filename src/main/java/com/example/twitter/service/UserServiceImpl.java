@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -83,7 +81,7 @@ public class UserServiceImpl implements UserService{
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                LocalDateTime.now()
+                user.getCreatedAt()
         );
     }
 }

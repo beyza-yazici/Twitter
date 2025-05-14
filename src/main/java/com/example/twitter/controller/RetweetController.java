@@ -10,14 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/retweets")
+@RequestMapping("/retweet")
 @RequiredArgsConstructor
 @Slf4j
 public class RetweetController {
 
     private final RetweetService retweetService;
 
-    @PostMapping("/tweet/{tweetId}")
+    /*@PostMapping("/tweet/{tweetId}")
     public ResponseEntity<RetweetResponseDTO> createRetweet(@PathVariable Long tweetId, @RequestBody(required = false) RetweetRequestDTO retweetRequestDTO) {
         log.info("Retweeting tweet: {}", tweetId);
 
@@ -36,5 +36,5 @@ public class RetweetController {
         log.info("Deleting retweet: {}", retweetId);
         retweetService.deleteRetweet(retweetId);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 }

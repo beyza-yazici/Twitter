@@ -50,9 +50,7 @@ public class TweetServiceImpl implements TweetService {
             tweet.setUser(user);
             tweet.setCreatedAt(LocalDateTime.now());
 
-            // İlişkisel alanları başlat
             tweet.setComments(new ArrayList<>());
-            // Diğer ilişkisel alanlar varsa (likes, retweets) onları da başlatın
 
             Tweet savedTweet = tweetRepository.save(tweet);
             return convertTweetToTweetResponse(savedTweet);
@@ -96,21 +94,18 @@ public class TweetServiceImpl implements TweetService {
     }
 
     private TweetResponseDTO convertTweetToTweetResponse(Tweet tweet) {
-        // Önce tweet'in kendisinin null olup olmadığını kontrol et
+
         if (tweet == null) {
             return null;
         }
 
-        // Kullanıcı için null kontrolü yap
         UserResponseDTO userResponseDTO = tweet.getUser() != null ?
                 convertUserToUserResponse(tweet.getUser()) : null;
 
-        // İlişkili koleksiyonlar için null kontrolü yap
         int commentCount = tweet.getComments() != null ? tweet.getComments().size() : 0;
         int likeCount = tweet.getLikes() != null ? tweet.getLikes().size() : 0;
         int retweetCount = tweet.getRetweets() != null ? tweet.getRetweets().size() : 0;
 
-        // Yorumları dönüştür (eğer mevcutsa)
         List<CommentResponseDTO> commentResponseDTOs = new ArrayList<>();
         if (tweet.getComments() != null) {
             commentResponseDTOs = tweet.getComments().stream()
@@ -122,13 +117,13 @@ public class TweetServiceImpl implements TweetService {
                 tweet.getId(),
                 tweet.getContent(),
                 userResponseDTO,
-                commentResponseDTOs,  // Dönüştürülmüş yorumlar listesi
+                commentResponseDTOs,
                 tweet.getCreatedAt(),
                 likeCount,
                 commentCount,
                 retweetCount,
-                false,  // isLiked - şu an statik olarak false
-                false   // isRetweeted - şu an statik olarak false
+                false,
+                false
         );
     }
 
@@ -137,7 +132,7 @@ public class TweetServiceImpl implements TweetService {
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                LocalDateTime.now()
+                user.getCreatedAt()
         );
     }
 

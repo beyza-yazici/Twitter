@@ -7,7 +7,6 @@ import com.example.twitter.dto.UserResponseDTO;
 import com.example.twitter.service.AuthService;
 import com.example.twitter.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +40,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<Void> logout(HttpServletRequest request){
         log.info("Logout request received");
         SecurityContextHolder.clearContext();;
         HttpSession session = request.getSession(false);

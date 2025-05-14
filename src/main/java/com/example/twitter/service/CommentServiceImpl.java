@@ -84,7 +84,7 @@ public class CommentServiceImpl implements CommentService{
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                LocalDateTime.now()
+                user.getCreatedAt()
         );
     }
 

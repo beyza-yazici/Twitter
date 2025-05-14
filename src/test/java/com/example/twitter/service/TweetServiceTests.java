@@ -12,6 +12,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import java.util.Collections;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,6 +44,11 @@ class TweetServiceTests {
 
     @Test
     void whenCreateTweet_thenReturnTweetResponseDTO() {
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                "testuser", null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         TweetRequestDTO request = new TweetRequestDTO();
         request.setContent("Test tweet");
@@ -72,6 +82,8 @@ class TweetServiceTests {
         assertEquals(currentUser.getUsername(), response.getUser().getUsername());
 
         verify(tweetRepository).save(any(Tweet.class));
+
+        SecurityContextHolder.clearContext();
     }
 
     @Test

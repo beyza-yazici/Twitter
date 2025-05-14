@@ -8,7 +8,6 @@ import com.example.twitter.service.TweetService;
 import com.example.twitter.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,17 +23,17 @@ public class UserController {
     private final TweetService tweetService;
     private final AuthService authService;
 
-    @PostMapping("/register")
+    /*@PostMapping("/register")
     public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO userRequestDTO){
         log.info("Registering new user with username: {}", userRequestDTO.getUsername());
         return new ResponseEntity<>(userService.registerUser(userRequestDTO), HttpStatus.CREATED);
-    }
+    }*/
 
-    @GetMapping("/profile")
+    /*@GetMapping("/profile")
     public ResponseEntity<UserResponseDTO> getCurrentUser() {
         log.info("Fetching current user profile");
         return ResponseEntity.ok(authService.getCurrentUser());
-    }
+    }*/
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponseDTO> findUserById(@PathVariable Long userId){

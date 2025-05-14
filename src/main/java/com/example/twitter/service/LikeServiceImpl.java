@@ -86,7 +86,7 @@ public class LikeServiceImpl implements LikeService{
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                LocalDateTime.now()
+                user.getCreatedAt()
         );
     }
 }
