@@ -1,0 +1,236 @@
+.home-page {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.home-container {
+  display: grid;
+  grid-template-columns: 275px 1fr;
+  height: 100vh;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Sidebar Stilleri */
+.sidebar {
+  padding: 20px 12px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  border-right: 1px solid #eee;
+}
+
+.sidebar .logo img {
+  width: 30px;
+  height: 30px;
+  color: #1da1f2;
+}
+
+.menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 30px 0;
+}
+
+.menu li {
+  padding: 12px 16px;
+  margin-bottom: 4px;
+  border-radius: 50px;
+  font-size: 18px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.menu li:hover {
+  background-color: rgba(29, 161, 242, 0.1);
+}
+
+.menu li.active {
+  font-weight: 700;
+}
+
+.tweet-button {
+  width: 90%;
+  padding: 15px;
+  background-color: #1da1f2;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.tweet-button:hover {
+  background-color: #1a91da;
+}
+
+/* Ana İçerik Stilleri */
+.main-content {
+  border-right: 1px solid #eee;
+}
+
+.header {
+  padding: 15px;
+  position: sticky;
+  top: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  border-bottom: 1px solid #eee;
+}
+
+.tabs {
+  display: flex;
+  margin-top: 10px;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 15px 0;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+  font-weight: 700;
+  border-bottom: 2px solid #1da1f2;
+}
+
+/* Tweet Oluşturma Formu */
+.tweet-compose {
+  display: flex;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.tweet-form {
+  flex: 1;
+}
+
+.tweet-form textarea {
+  width: 100%;
+  min-height: 80px;
+  border: none;
+  font-size: 18px;
+  resize: none;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+.tweet-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tweet-icons {
+  display: flex;
+  gap: 12px;
+}
+
+.tweet-icons span {
+  font-size: 20px;
+  color: #1da1f2;
+  cursor: pointer;
+}
+
+.tweet-submit {
+  background-color: #1da1f2;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.tweet-submit:disabled {
+  background-color: #9bd1f9;
+  cursor: not-allowed;
+}
+
+/* Tweet Listesi Stilleri */
+.tweets-container {
+  padding: 0 15px;
+}
+
+.tweets-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.tweet-item {
+  display: flex;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.tweet-avatar {
+  margin-right: 12px;
+}
+
+.tweet-avatar img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.tweet-content {
+  flex: 1;
+}
+
+.tweet-header {
+  margin-bottom: 5px;
+}
+
+.tweet-name {
+  font-weight: 700;
+  margin-right: 5px;
+}
+
+.tweet-username, .tweet-date {
+  color: #657786;
+  font-size: 14px;
+  margin-right: 5px;
+}
+
+.tweet-text {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.tweet-actions {
+  display: flex;
+  justify-content: space-between;
+  max-width: 80%;
+}
+
+.tweet-action {
+  cursor: pointer;
+  color: #657786;
+}
+
+.tweet-action:hover {
+  color: #1da1f2;
+}
+
+.loading-spinner, .error-message, .no-tweets-message {
+  padding: 20px;
+  text-align: center;
+}
+
+.error-message {
+  color: #e0245e;
+}
